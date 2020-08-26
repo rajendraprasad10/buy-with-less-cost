@@ -1,0 +1,191 @@
+{% extends 'layout.html' %}
+{% block content %}
+  {% include 'message.html' %}
+<div class="container ">
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="/admin">Admin</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" href="/admin">Home <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/brands">Brand</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/category">Category</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="/" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Brands
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            {% for brand in brands %}
+          <a class="dropdown-item" href="{{url_for('get_brand', id = brand.id)}}">{{brand.name}}</a>
+            {% endfor %}
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="/" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          Categories
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+            {% for category in category %}
+          <a class="dropdown-item" href="{{url_for('get_category', id = category.id)}}">{{category.name}}</a>
+            {% endfor %}
+        </div>
+      </li>
+    </ul>
+    <form class="form-inline my-2 my-lg-0">
+      <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+      <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+    </form>
+  </div>
+</nav>
+</div>
+<!------ navbar ends ---------------->
+
+<div class="container">
+    <div class="row">
+        {% if brand %}
+        {% for b in brand.items %}
+        <div class="col-md-3 mt-4">
+            <div class="card">
+                    <center><img src="{{ url_for('static', filename = 'images/' + b.image_1)}}" alt="{{b.name}}" clas="card-img-top" height="180" width="120"></center>
+                <div class="card-body">
+                    {% if b.discount> 0 %}
+                        <center><h5>{{b.name}}</h5>
+                        <p><b>Price Rs: {{b.price}}</b></p></center>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="{{url_for('product_details', id=b.id)}}" class="float-left btn btn-sm btn-primary">Details</a>
+                    <a href="#" class="float-right btn btn-sm btn-warning">Buy</a>
+            </div>
+        </div>
+    </div>
+        {% endfor %}
+    </div>
+
+    <div class="row">
+                <div class="col text-center">
+            {% if brand.has_prev %}
+            <a href="{{ url_for('get_brand',id =get_b.id, page=brand.prev_num)}}" class="btn btn-outline-info btn-sm mt-3">Previus</a>
+            {% endif %}
+            {% for page_num in brand.iter_pages() %}
+            {% if page_num%}
+            {% if brand.page == page_num %}
+            <a href="{{ url_for('get_brand', id =get_b.id,  page=page_num)}}" class="btn btn-outline-info btn-sm mt-3">{{page_num}}</a>
+            {% else %}
+            <a href="{{ url_for('get_brand',id =get_b.id, page=page_num)}}" class="btn btn-outline-info btn-sm mt-3">{{page_num}}</a>
+            {% endif %}
+            {% else %}
+            ...
+            {% endif %}
+            {% endfor %}
+            {% if brand.has_next %}
+            <a href="{{ url_for('get_brand', id =get_b.id, page=brand.next_num)}}" class="btn btn-outline-info btn-sm mt-3">Next</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="row">
+        {% elif get_category %}
+        {% for get_cat in get_category.items %}
+
+        <div class="col-md-3 mt-4">
+            <div class="card">
+                    <center><img src="{{ url_for('static', filename = 'images/' + get_cat.image_1)}}" alt="{{get_cat.name}}" clas="card-img-top" height="180" width="120"></center>
+                <div class="card-body">
+                    {% if get_cat.discount> 0 %}
+                        <center><h5>{{get_cat.name}}</h5>
+                        <p><b>Price Rs: {{get_cat.price}}</b></p></center>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="{{url_for('product_details', id=get_cat.id)}}" class="float-left btn btn-sm btn-primary">Details</a>
+                    <a href="#" class="float-right btn btn-sm btn-warning">Buy</a>
+            </div>
+        </div>
+    </div>
+        {% endfor %}
+        </div>
+            <div class="row">
+                <div class="col text-center">
+            {% if get_category.has_prev %}
+            <a href="{{ url_for('get_category',id =get_cat.id, page=get_category.prev_num)}}" class="btn btn-outline-info btn-sm mt-3">Previus</a>
+            {% endif %}
+            {% for page_num in get_category.iter_pages() %}
+            {% if page_num%}
+            {% if get_category.page == page_num %}
+            <a href="{{ url_for('get_category', id =get_cat.id,  page=page_num)}}" class="btn btn-outline-info btn-sm mt-3">{{page_num}}</a>
+            {% else %}
+            <a href="{{ url_for('get_category',id =get_cat.id, page=page_num)}}" class="btn btn-outline-info btn-sm mt-3">{{page_num}}</a>
+            {% endif %}
+            {% else %}
+            ...
+            {% endif %}
+            {% endfor %}
+            {% if get_category.has_next %}
+            <a href="{{ url_for('get_category', id =get_cat.id, page=get_category.next_num)}}" class="btn btn-outline-info btn-sm mt-3">Next</a>
+            {% endif %}
+        </div>
+    </div>
+<!----- Product page in home and pagination -->
+        {% else %}
+         {% for product in products.items %}
+        <div class="col-md-3 mt-4">
+            <div class="card">
+                    <center><img src="{{ url_for('static', filename = 'images/' + product.image_1)}}" alt="{{product.name}}" clas="card-img-top" height="180" width="120"></center>
+                <div class="card-body">
+                    {% if product.discount> 0 %}
+                        <center><h5>{{product.name}}</h5>
+                        <p><b>Price Rs: {{product.price}}</b></p></center>
+                    {% endif %}
+                </div>
+                <div class="card-footer">
+                    <a href="{{url_for('product_details', id=product.id)}}" class="float-left btn btn-sm btn-primary">Details</a>
+                    <a href="#" class="float-right btn btn-sm btn-warning">Buy</a>
+            </div>
+        </div>
+    </div>
+        {% endfor %}
+        </div>
+    <div class="row">
+        <div class="col text-center">
+            {% if products.has_prev %}
+            <a href="{{ url_for('home', page=products.prev_num)}}" class="btn btn-outline-info btn-sm mt-3">Previus</a>
+            {% endif %}
+            {% for page_num in products.iter_pages(left_edge=1, right_edge=2,left_current=1, right_current=2)%}
+            {% if page_num%}
+            {% if products.page == page_num %}
+            <a href="{{ url_for('home', page=page_num)}}" class="btn btn-outline-info btn-sm mt-3">{{page_num}}</a>
+            {% else %}
+            <a href="{{ url_for('home', page=page_num)}}" class="btn btn-outline-info btn-sm mt-3">{{page_num}}</a>
+            {% endif %}
+            {% else %}
+            ...
+            {% endif %}
+            {% endfor %}
+            {% if products.has_next %}
+            <a href="{{ url_for('home', page=products.next_num)}}" class="btn btn-outline-info btn-sm mt-3">Next</a>
+            {% endif %}
+        </div>
+    </div>
+        {% endif %}
+    </div>
+</div>
+
+
+
+<div class="container ">
+<nav class="navbar navbar-expand-lg navbar-light bg-light mt-4">
+ <center><b><p> hello rajendra</p></b></center>
+</nav>
+</div>
+
+{% endblock content %}
